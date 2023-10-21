@@ -1,0 +1,82 @@
+const User = require("../../model/user");
+const Account = require("../../model/account");
+const Transaction = require("../../model/transaction");
+const { AppErr, appErr } = require("../../utils/appErr");
+
+const createTranCtrl = async (req, res, next) => {
+  const { name, transactionType, amount, category, notes, account } = req.body;
+
+  try {
+    //1. find the User
+    const userFound = await User.findById(req.user);
+
+    if (!userFound) {
+      return next(new Error("User not found"));
+    }
+
+    //2. find the account, id of the account from the request
+
+    const accountFound = await Account.findById(account);
+
+    if (!accountFound) {
+      return next(new Error("Account not found"));
+    }
+    //3. create the transaction
+    const transaction = await Transaction.create({
+      name,
+      transactionType,
+      amount,
+      category,
+      notes,
+      createdBy: req.user,
+    });
+    //4. push to the account
+    accountFound.Transactions.push(transaction._id);
+    await accountFound.save();
+    res.json({
+      status: "Success",
+      data: transaction,
+    });
+    // 5. save the account and user
+    res.json({ msg: "Create Transactions" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getTransCtrl = async (req, res) => {
+  try {
+    res.json({ msg: "Get Transactions" });
+  } catch (error) {
+    res.json(error);
+  }
+};
+const getTranCtrl = async (req, res) => {
+  try {
+    res.json({ msg: "Create Transaction" });
+  } catch (error) {
+    res.json(error);
+  }
+};
+const deleteTranCtrl = async (req, res) => {
+  try {
+    res.json({ msg: "Delete Transaction" });
+  } catch (error) {
+    res.json(error);
+  }
+};
+const updateTranCtrl = async (req, res) => {
+  try {
+    res.json({ msg: "Update Transaction" });
+  } catch (error) {
+    res.json(error);
+  }
+};
+
+module.exports = {
+  createTranCtrl,
+  getTransCtrl,
+  getTranCtrl,
+  deleteTranCtrl,
+  updateTranCtrl,
+};

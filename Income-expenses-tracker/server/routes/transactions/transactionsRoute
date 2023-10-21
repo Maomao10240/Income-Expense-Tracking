@@ -1,0 +1,20 @@
+const express = require("express");
+const isLogin = require("../../middlewares/isLogin");
+
+const transactionsRoute = express();
+const {
+  createTranCtrl,
+  getTransCtrl,
+  getTranCtrl,
+  deleteTranCtrl,
+  updateTranCtrl,
+} = require("../../controllers/transactions/transactionCtrl");
+
+transactionsRoute.post("/", isLogin, createTranCtrl);
+
+transactionsRoute.get("/", getTransCtrl);
+transactionsRoute.get("/:id", getTranCtrl);
+transactionsRoute.delete("/:id", deleteTranCtrl);
+transactionsRoute.put("/:id", updateTranCtrl);
+
+module.exports = transactionsRoute;

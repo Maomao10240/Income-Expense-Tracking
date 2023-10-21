@@ -1,0 +1,69 @@
+const User = require("../../model/user");
+const Account = require("../../model/account");
+
+const createAccCtrl = async (req, res, next) => {
+  const { name, initialBalance, accountType, notes } = req.body;
+  try {
+    // 1. Find the logged user
+    const userFound = await User.findById(req.user);
+    if (!userFound) {
+      return next(new Error("User not found"));
+    }
+
+    // 2. create the account
+    const account = await Account.create({
+      name,
+      initialBalance,
+      accountType,
+      notes,
+      createdBy: req.user,
+    });
+    // 3. push the account to the user
+    userFound.accounts.push(account.id);
+    // 4. resave the user
+    await userFound.save();
+    res.json({
+      status: "success",
+      data: account,
+    });
+    // next();
+  } catch (error) {
+    next(error);
+  }
+};
+const getAccsCtrl = async (req, res) => {
+  try {
+    res.json({ msg: "Get Accounts" });
+  } catch (error) {
+    res.json(error);
+  }
+};
+const deleteAccCtrl = async (req, res) => {
+  try {
+    res.json({ msg: "Accounts" });
+  } catch (error) {
+    res.json(error);
+  }
+};
+const getAccCtrl = async (req, res) => {
+  try {
+    res.json({ msg: "Get Account" });
+  } catch (error) {
+    res.json(error);
+  }
+};
+const updateAccCtrl = async (req, res) => {
+  try {
+    res.json({ msg: "Update Accounts" });
+  } catch (error) {
+    res.json(error);
+  }
+};
+
+module.exports = {
+  createAccCtrl,
+  getAccsCtrl,
+  deleteAccCtrl,
+  getAccCtrl,
+  updateAccCtrl,
+};
